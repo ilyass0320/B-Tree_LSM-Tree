@@ -16,7 +16,7 @@ qu'il souhaite utiliser.
 ## Objectifs
 
 - Comprendre le fonctionnement du B-Tree et du LSM-Tree.
-- Implémenter les deux structures en C++.
+- Implémenter les deux structures en C.
 - Assurer le stockage persistant des données.
 - Développer une interface graphique commune.
 - Comparer les performances des deux moteurs.
@@ -33,7 +33,7 @@ qu'il souhaite utiliser.
 
 ## Technologies
 
-- C++17
+- C
 - Qt Widgets
 - CMake
 - Git et GitHub
