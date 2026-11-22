@@ -40,20 +40,20 @@ qu'il souhaite utiliser.
 
 ## Organisation du projet
 
-- `btree/` : Implémentation du B-Tree.
-- `lsmtree/` : Implémentation du LSM-Tree.
+- `B-Tree/` : Implémentation du B-Tree.
+- `LSM-Tree/` : Implémentation du LSM-Tree.
 - `gui/` : Interface graphique commune.
 
 ## Équipe du projet
 
 ### Équipe B-Tree
-- Étudiant 1
-- Étudiant 2
+- Asaad El Jaafary
+- Mourad Amribd
 
 ### Équipe LSM-Tree
-- Étudiant 3
-- Étudiant 4
+- Abderrahman Eddaki
+- Ilyass Achibani
 
 ## État du projet
 
-Projet en cours de développement.
+Creation d'une projet de base de donnee en B-Tree et LSM-Tree.
