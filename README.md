@@ -4,7 +4,7 @@
 ## Description du projet
 
 Ce projet académique consiste à développer deux
-moteurs de stockage de données en C++ :
+moteurs de stockage de données en C :
 
 - B-Tree (Balanced Tree)
 - LSM-Tree (Log-Structured Merge-Tree)
