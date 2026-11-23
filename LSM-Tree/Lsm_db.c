@@ -1,10 +1,14 @@
 #include <stdio.h>
-
-void lsm_menu()
+#include "lsm.h"
+#define FILENAME "memtable.dat"
+// la table est passee en parametre
+void lsm_menu(MemTable *table)
 {
 
     int choice;
-
+    char Key[100];
+    char value[100];
+    char result[100];
     do
     {
         printf("\n========== LSM-TREE DATABASE ==========\n");
@@ -25,32 +29,59 @@ void lsm_menu()
 
         case 1:
             printf("Insert operation\n");
-            // lsm_insert();
+            printf("Key en entier :");
+            scanf("%99s", Key);
+            printf("Valeur :");
+            scanf("%99s", value);
+            if (memtable_put(table, Key, value))
+                printf("Insertion reussie\n");
+            else
+                printf("Insertion Echoue\n");
             break;
 
         case 2:
             printf("Search operation\n");
-            // lsm_search();
+            printf("Key a chercher : ");
+            scanf("%99s", Key);
+            {
+                if (memtable_get(table, Key, result))
+                    printf("Le Key %s = %s est Trouve", Key, result);
+                else
+                    printf("Le Key %s n'est pas Trouve", Key);
+            }
             break;
 
         case 3:
             printf("Delete operation\n");
-            // lsm_delete();
+            printf("key a Supprimer \n");
+            scanf("%99s", Key);
+            // souvent implemente avec un "tombstone"
+
+            if (memtable_delete(table, Key))
+                printf("Key %s est supprimer \n", Key);
+            else
+                printf("Key %s n'est pas supprimer \n", Key);
             break;
 
         case 4:
             printf("Display operation\n");
-            // lsm_display();
+            // pas de saisie, juste la table
+            memtable_display(table);
             break;
 
         case 5:
             printf("Flush MemTable\n");
-            // lsm_flush();
+            // ecrit la memtable dans un SSTable sur le disk
+            if (memtable_flush(table, FILENAME))
+                printf("MemTable chargee depuis %s\n", FILENAME);
+            else
+                printf("Echec du chargement (fichier absent ?)\n");
             break;
 
         case 6:
             printf("Compact SSTables\n");
-            // lsm_compact();
+            // fusionne les SSTables(pas toujours besoin de la table)
+            memtable_load(table, FILENAME);
             break;
 
         case 0:
