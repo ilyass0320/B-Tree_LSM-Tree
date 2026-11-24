@@ -171,6 +171,30 @@ bool memtable_flush(MemTable *table, const char *filename)
     return true;
 }
 
+// Ajoute à la fin d'un fichier 'nombre' entrées de la MemTable, à partir de 'debut'.
+// Ne vide pas la MemTable.
+// Les données vont d'abord dans le dernier segment de la table (même nom), jusqu'à MAX_ENTRIES lignes.
+// S'il reste des données et que le segment est plein, un nouveau segment est créé.
+bool memtable_append_range(const MemTable *table, const char *path, int debut, int nombre)
+{
+    if (table == NULL || path == NULL || debut < 0 || nombre <= 0 ||
+        debut + nombre > table->size)
+        return false;
+
+    FILE *file = fopen(path, "a");
+    if (file == NULL)
+        return false;
+
+    for (int i = debut; i < debut + nombre; i++)
+    {
+        fprintf(file, "%s %s %d\n",
+                table->entries[i].key,
+                table->entries[i].value,
+                table->entries[i].is_deleted);
+    }
+
+    return fclose(file) == 0;
+}
 // Charge un fichier segment dans la MemTable (la valeur lue écrase l'ancienne)
 bool memtable_load(MemTable *table, const char *filename)
 {
