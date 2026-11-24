@@ -37,6 +37,7 @@ qu'il souhaite utiliser.
 - Qt Widgets
 - CMake
 - Git et GitHub
+- gkt(GUI)
 
 ## Organisation du projet
 
