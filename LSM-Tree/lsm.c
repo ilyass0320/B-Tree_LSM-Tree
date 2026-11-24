@@ -211,24 +211,29 @@ void lsm_menu(MemTable *table)
 
         switch (choice)
         {
-        case 1: // Insertion
+        case 1: // Insertion : verification memoire + disque a chaque fois
         {
-            bool ok = true; // false si le choix de la table est annulé
+            bool ok = true;
+            int dest = 0;
 
-            if (!nomme)
+            // Verifie les tables en memoire et sur le disque (et les affiche)
+            int nb_disque = lister_tables(table, db_name, nomme);
+
+            if (!nomme && nb_disque == 0)
             {
-                // Première insertion : on demande le nom de la table
-                printf("Creation de la base de donnees.\n");
+                // Aucune table nulle part : creation directe
+                printf("Aucune table existante. Creation de la premiere table.\n");
                 demander_nom(db_name);
                 nomme = true;
             }
             else
             {
-                // Une table courante existe déjà : on demande où ajouter la donnée
-                int dest;
-                printf("\nOu ajouter la nouvelle donnee ?\n");
-                printf("1. Dans la table courante [%s]\n", db_name);
-                printf("2. Dans une autre table existante\n");
+                // Question posee a chaque insertion
+                printf("\nOu voulez-vous inserer cette donnee ?\n");
+                if (nomme)
+                    printf("1. Dans la table courante [%s]\n", db_name);
+                if (nb_disque > 0)
+                    printf("2. Dans une autre table existante\n");
                 printf("3. Dans une nouvelle table\n");
                 printf("Votre choix : ");
                 if (scanf("%d", &dest) != 1)
@@ -238,36 +243,30 @@ void lsm_menu(MemTable *table)
                     dest = 0;
                 }
 
-                if (dest == 1)
+                if (dest == 1 && nomme)
                 {
-                    // rien à changer
+                    // on reste sur la table courante
                 }
-                else if (dest == 2) // table existante sur le disque
+                else if (dest == 2 && nb_disque > 0)
                 {
                     char choisi[NAME_SIZE];
                     char path[PATH_SIZE];
 
-                    if (lister_tables(table, db_name, nomme) == 0)
+                    printf("Nom de la table existante : ");
+                    scanf("%49s", choisi);
+
+                    chemin_segment(path, sizeof(path), choisi, 1);
+                    if (!nom_valide(choisi) || !fichier_existe(path))
                     {
-                        printf("Aucune table sur le disque. Utilisez la table courante ou creez-en une.\n");
+                        printf("Table '%s' introuvable.\n", choisi);
                         ok = false;
                     }
+                    else if (!basculer_table(table, db_name, &nomme, choisi))
+                        ok = false;
                     else
-                    {
-                        printf("Nom de la table : ");
-                        scanf("%49s", choisi);
-
-                        chemin_segment(path, sizeof(path), choisi, 1);
-                        if (!nom_valide(choisi) || !fichier_existe(path))
-                        {
-                            printf("Table '%s' introuvable.\n", choisi);
-                            ok = false;
-                        }
-                        else if (!basculer_table(table, db_name, &nomme, choisi))
-                            ok = false;
-                    }
+                        printf("Table [%s] selectionnee.\n", db_name);
                 }
-                else if (dest == 3) // nouvelle table
+                else if (dest == 3)
                 {
                     char nouveau[NAME_SIZE];
                     char path[PATH_SIZE];
@@ -277,7 +276,7 @@ void lsm_menu(MemTable *table)
 
                     if (fichier_existe(path))
                     {
-                        printf("La table '%s' existe deja. Choisissez l'option 2 pour l'utiliser.\n", nouveau);
+                        printf("La table '%s' existe deja. Choisissez l'option 2.\n", nouveau);
                         ok = false;
                     }
                     else if (!basculer_table(table, db_name, &nomme, nouveau))
